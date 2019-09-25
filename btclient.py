@@ -1,4 +1,5 @@
 import datetime
+import json
 import os.path
 import time
 from datetime import date, timedelta
@@ -6,10 +7,14 @@ from os import path
 
 from bluetooth import *
 
+import alert
+import sendmail
+
 
 def connect(addr):
     myfile = None
     sock = None
+    soglia = 0
     try:
         service_matches = find_service(address=addr)
 
@@ -27,6 +32,11 @@ def connect(addr):
         sock = BluetoothSocket(RFCOMM)
         res = sock.connect((host, port))
 
+        with open('config.json') as json_data_file:
+            data = json.load(json_data_file)
+
+            soglia = data["voltthreshold"]
+
         leng = 20
 
         sock.send((0xF0).to_bytes(1, byteorder='big'))
@@ -40,8 +50,6 @@ def connect(addr):
         d = b""
         filetowrite = dir_path + '/data' + dt.strftime("%Y-%m-%d") + '.txt'
         myfile = open(filetowrite, 'a')
-        soglia = 4.00
-        # soglia = 12.50
 
         print("connected to \"%s\" on %s" % (name, host))
 
@@ -101,11 +109,13 @@ def connect(addr):
 
             yesterday = date.today() - timedelta(days=1)
             fileold = dir_path + "/data" + yesterday.strftime('%Y-%m-%d') + ".txt"
-            if path.exists(fileold):
-                os.system(dir_path + "/sendmail.py")
 
-            if data['Volts'] < soglia:
-                os.system(dir_path + "/alert.py " + volts)
+            if path.exists(fileold):
+                sendmail.send()
+
+            # print("Soglia:"+str(soglia))
+            if (soglia > 0 and data['Volts'] < soglia):
+                alert.send(str(data['Volts']))
 
     except Exception as e:
         print(e)
