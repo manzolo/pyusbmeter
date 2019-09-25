@@ -8,5 +8,7 @@
     },
     "voltthreshold": 0,
     "interface": "",
-    "devicename": "UM25C"
+    "devicename": "UM25C",
+    "lastalertdate": "",
+    "lastvolt": "0"
 }
