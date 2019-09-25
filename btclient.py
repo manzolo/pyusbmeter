@@ -9,6 +9,7 @@ from bluetooth import *
 import alert
 import datefunction
 import sendmail
+import websend
 
 
 def connect(addr):
@@ -33,9 +34,9 @@ def connect(addr):
         res = sock.connect((host, port))
 
         with open('config.json') as json_data_file:
-            data = json.load(json_data_file)
+            jsondata = json.load(json_data_file)
 
-            soglia = data["voltthreshold"]
+            soglia = jsondata["voltthreshold"]
 
         leng = 20
 
@@ -102,6 +103,11 @@ def connect(addr):
             if (soglia > 0 and data['Volts'] < soglia):
                 alert.send(volts)
 
+            websend.send(addr, timestr, volts, temps)
+
+            # with open('config.json', 'w') as outfile:
+            # jsondata["lastvolt"] = volts
+            # json.dump(jsondata, outfile)
             d = b""
             sock.send((0xF0).to_bytes(1, byteorder='big'))
             time.sleep(10)
