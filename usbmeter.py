@@ -1,31 +1,33 @@
 #!/usr/bin/python3
 
-import argparse
+import json
 import time
 
 from bluetooth import *
 
 import btclient
 
-parser = argparse.ArgumentParser(description="CLI for USB Meter")
-parser.add_argument("--addr", dest="addr", type=str, help="Address of USB Meter")
-
-args = parser.parse_args()
 addr = None
 
-if args.addr:
-    addr = args.addr
+with open('config.json') as json_data_file:
+    data = json.load(json_data_file)
+
+interface = data["interface"]
+if len(interface) > 0:
+    print("Device loaded from config -> " + interface)
+    addr = interface
 else:
     nearby_devices = discover_devices(lookup_names=True)
 
     for v in nearby_devices:
-        if v[1] == "UM25C":
+        if v[1] == data["devicename"]:
             print("Found", v[0])
             addr = v[0]
             break
 
 while True:
-    if (btclient.connect(addr) == -100):
-        quit(0)
+    if (not addr is None):
+        if (btclient.connect(addr) == -100):
+            quit(0)
 
     time.sleep(10)

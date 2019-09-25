@@ -6,5 +6,7 @@
         "passwd":"smtppassword"
         "sendto":"email@sendto.com"
     },
-    "voltthreshold": 0
+    "voltthreshold": 0,
+    "interface": "",
+    "devicename": "UM25C"
 }
