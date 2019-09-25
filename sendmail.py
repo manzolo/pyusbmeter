@@ -10,6 +10,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from os import path
 
+import datefunction
+
 
 def send():
     with open('config.json') as json_data_file:
@@ -31,8 +33,8 @@ def send():
             if day == 0:
                 continue
 
-            yesterday = date.today() - datetime.timedelta(days=day)
-            file_location = dir_path + "/data" + yesterday.strftime('%Y-%m-%d') + ".txt"
+            pastday = date.today() - datetime.timedelta(days=day)
+            file_location = dir_path + "/data" + datefunction.toDateString(pastday) + ".txt"
 
             if (not path.exists(file_location)):
                 print(file_location + ' not found')
