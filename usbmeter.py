@@ -2,7 +2,6 @@
 
 import argparse
 import time
-from os import path
 
 from bluetooth import *
 
@@ -26,7 +25,7 @@ else:
             break
 
 while True:
-    btclient.connect(addr)
-    if path.exists("exit.txt"):
-        break
+    if (btclient.connect(addr) == -100):
+        quit(0)
+
     time.sleep(10)

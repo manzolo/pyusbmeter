@@ -15,7 +15,7 @@ def connect(addr):
 
         if len(service_matches) == 0:
             print("No services found for address ", addr)
-            return
+            return -1
 
         first_match = service_matches[0]
         port = first_match["port"]
@@ -107,18 +107,16 @@ def connect(addr):
             if data['Volts'] < soglia:
                 os.system(dir_path + "/alert.py " + volts)
 
-            if path.exists("exit.txt"):
-                break
     except Exception as e:
         print(e)
         try:
             sock.close()
             if (myfile is not None):
                 myfile.close()
-            return
+            return -2
         except Exception as e:
             print(addr + " disconnect")
             # print(e)
-            return
+            return -3
         finally:
             print(addr + " disconnect")
