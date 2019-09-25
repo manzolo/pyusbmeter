@@ -1,0 +1,5 @@
+/venv/
+config.json
+/data*
+/exit.txt2
+/exit.txt
