@@ -16,9 +16,9 @@ def send(volt):
 
         send_to_email = data["mailserver"]["sendto"]
 
-        subject = 'WARNING, LOW BATTERY LEVEL !!!'
+        message = 'Detected ' + volt + ' Volt'
 
-        message = volt + ' Volt'
+        subject = 'WARNING, LOW BATTERY LEVEL ' + volt + ' Volt' + '!!!'
 
         msg = MIMEMultipart()
         msg['From'] = smtpuser
