@@ -22,7 +22,7 @@ def send(device, datalog, volt, temp):
             time = ((datefunction.now().replace(tzinfo=None) - lastcheck).total_seconds())
             # print(time)
 
-            if (time > 60 * 1):
+            if (time > 60 * 30):
                 realsend(device, datalog, volt, temp)
     except Exception as e:
         print(e)
