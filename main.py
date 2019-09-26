@@ -34,3 +34,4 @@ while True:
 
 # crontab -e
 # * * * * * cd /home/user/pyusbmeter && /usr/bin/python3 /home/user/pyusbmeter/main.py
+# */20 * * * * kill -9 $(ps -eo comm,pid,etimes | awk '/^main.py/ {if ($3 > 660) { print $2}}') 1&>2 /dev/null
