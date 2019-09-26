@@ -31,3 +31,6 @@ while True:
             quit(0)
 
     time.sleep(10)
+
+# crontab -e
+# * * * * * cd /home/user/pyusbmeter && /usr/bin/python3 /home/user/pyusbmeter/main.py
