@@ -14,8 +14,8 @@ def send(volt):
 
         lastvolt = data["lastvolt"]
         lastcheck = datetime.strptime(data["lastalertdate"], '%Y-%m-%d %H:%M:%S')
-        # print(str(float(lastvolt)-float(volt)))
-        if float(lastvolt) <= 0 or ((float(lastvolt) - float(volt) < 0.50)):
+        #print(str(float(lastvolt)-float(volt)))
+        if float(lastvolt) <= 0 or ((float(lastvolt) - float(volt) < 0.05)):
             print(str("Volt " + lastvolt + " -> " + volt))
         else:
             # if (((datefunction.now().replace(tzinfo=None) - lastcheck).total_seconds()) < 60 * 60):
