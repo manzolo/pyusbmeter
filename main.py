@@ -5,7 +5,7 @@ import time
 
 from bluetooth import *
 
-import btclient
+import btsend
 
 addr = None
 
@@ -27,7 +27,7 @@ else:
 
 while True:
     if (not addr is None):
-        if (btclient.connect(addr) == -100):
+        if (btsend.connect(addr) == -100):
             quit(0)
 
     time.sleep(10)
