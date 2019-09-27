@@ -22,10 +22,10 @@ def send(addr, volt):
     print("Last:" + str(lastvolt))
     print("Curr:" + str(volt))
     print("Diff:" + str(lastvolt - volt))
-    #
-    if lastvolt <= 0:
-        print("No rif.")
-        return
+
+    #if lastvolt <= 0:
+    #    print("No rif.")
+    #    return
 
     #if volt >= lastvolt:
     #    print("Up")
