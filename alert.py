@@ -15,42 +15,52 @@ def send(addr, volt):
     lastvolt = data[addr]["lastvolt"]
     if len(data[addr]["lastalertdate"]) > 0:
         lastcheck = datetime.strptime(data[addr]["lastalertdate"], '%Y-%m-%d %H:%M:%S')
-        # print(str(float(lastvolt)-float(volt)))
-    if lastvolt <= 0 or (lastvolt > volt and (lastvolt - volt < 0.05)):
-        print(str("Volt " + str(lastvolt) + " -> " + str(volt)))
-    else:
-        # if (((datefunction.now().replace(tzinfo=None) - lastcheck).total_seconds()) < 60 * 60):
-        #   return
+        if (((datefunction.now().replace(tzinfo=None) - lastcheck).total_seconds()) < 3600):
+            print("Already: " +str(((datefunction.now().replace(tzinfo=None) - lastcheck).total_seconds())))
+            return
 
-        smtphost = data["mailserver"]["host"]
-        smtpport = data["mailserver"]["port"]
-        smtpuser = data["mailserver"]["user"]
-        smtppwd = data["mailserver"]["passwd"]
+    print("Last:" + str(lastvolt))
+    print("Curr:" + str(volt))
+    print("Diff:" + str(lastvolt - volt))
+    #
+    if lastvolt <= 0:
+        print("No rif.")
+        return
 
-        send_to_email = data["mailserver"]["sendto"]
+    #if volt >= lastvolt:
+    #    print("Up")
+    #    return
 
-        message = addr + ' detected ' + str(volt) + ' volt, previous value ' + str(lastvolt) + ' volt'
 
-        subject = 'WARNING, LOW BATTERY LEVEL ' + str(volt) + ' Volt on ' + addr + '!!!'
+    smtphost = data["mailserver"]["host"]
+    smtpport = data["mailserver"]["port"]
+    smtpuser = data["mailserver"]["user"]
+    smtppwd = data["mailserver"]["passwd"]
 
-        msg = MIMEMultipart()
-        msg['From'] = smtpuser
-        msg['To'] = send_to_email
-        msg['Subject'] = subject
+    send_to_email = data["mailserver"]["sendto"]
 
-        msg.attach(MIMEText(message, 'plain'))
+    message = addr + ' detected ' + str(volt) + ' volt, previous value ' + str(lastvolt) + ' volt'
 
-        try:
-            server = smtplib.SMTP(smtphost, smtpport)
-            server.login(smtpuser, smtppwd)
-            text = msg.as_string()
-            server.sendmail(smtpuser, send_to_email, text)
-            server.quit()
-            print("Successfully sent email")
-            data[addr]["lastalertdate"] = datefunction.nowToDatetimeHrString()
-            data[addr]["lastvolt"] = volt
+    subject = 'WARNING, LOW BATTERY LEVEL ' + str(volt) + ' Volt on ' + addr + '!!!'
 
-            with open('config.json', 'w') as outfile:
-                json.dump(data, outfile)
-        except:
-            print("Error: unable to send email")
+    msg = MIMEMultipart()
+    msg['From'] = smtpuser
+    msg['To'] = send_to_email
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(message, 'plain'))
+
+    try:
+        server = smtplib.SMTP(smtphost, smtpport)
+        server.login(smtpuser, smtppwd)
+        text = msg.as_string()
+        server.sendmail(smtpuser, send_to_email, text)
+        server.quit()
+        print("Successfully sent email")
+        data[addr]["lastalertdate"] = datefunction.nowToDatetimeHrString()
+        data[addr]["lastvolt"] = volt
+
+        with open('config.json', 'w') as outfile:
+            json.dump(data, outfile)
+    except:
+        print("Error: unable to send email")
