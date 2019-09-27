@@ -12,27 +12,31 @@ def connect(addr):
     myfile = None
     sock = None
     soglia = 0
+    service_matches = find_service(address=addr)
+
+    if len(service_matches) == 0:
+        print("No services found for address ", addr)
+        return -1
+
+    first_match = service_matches[0]
+    port = first_match["port"]
+    name = first_match["name"]
+    host = first_match["host"]
+
+    if name is None:
+        print("Error retrieve information address ", addr)
+        return -2
+
+    print("connecting to %s \"%s\" on %s" % (name, host, port))
+
     try:
-        service_matches = find_service(address=addr)
-
-        if len(service_matches) == 0:
-            print("No services found for address ", addr)
-            return -1
-
-        first_match = service_matches[0]
-        port = first_match["port"]
-        name = first_match["name"]
-        host = first_match["host"]
-
-        print("connecting to \"%s\" on %s" % (name, host))
-
         sock = BluetoothSocket(RFCOMM)
         res = sock.connect((host, port))
 
         with open('config.json') as json_data_file:
             jsondata = json.load(json_data_file)
 
-            soglia = jsondata["voltthreshold"]
+        soglia = jsondata["voltthreshold"]
 
         leng = 20
 
@@ -75,12 +79,11 @@ def connect(addr):
 
             d = b""
             sock.send((0xF0).to_bytes(1, byteorder='big'))
+            time.sleep(1)
             sock.close()
             if (myfile is not None):
                 myfile.close()
-
-            time.sleep(10)
-            return -100
+            return 0
 
     except Exception as e:
         print(e)

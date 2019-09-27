@@ -3,11 +3,11 @@
         "host":"smtp.domain.com",
         "port":25,
         "user":"user@domain.com",
-        "passwd":"smtppassword"
+        "passwd":"smtppassword",
         "sendto":"email@sendto.com"
     },
     "voltthreshold": 0,
-    "interface": "",
+    "interfaces": [],
     "devicename": "UM25C",
     "lastalertdate": "",
     "lastvolt": "0",
