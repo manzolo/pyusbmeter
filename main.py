@@ -22,6 +22,11 @@ if len(interfaces) == 0:
 for interface in interfaces:
     print("Try connecting to " + interface)
     if (not interface is None):
+        if interface not in data:
+            data[interface] = {"lastvolt": 0, "lastalertdate": "", "lastwebsenddate": ""}
+            with open('config.json', 'w') as outfile:
+                json.dump(data, outfile)
+
         btinterface.connect(interface)
         time.sleep(1)
 

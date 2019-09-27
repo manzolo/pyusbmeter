@@ -18,7 +18,9 @@ def send(device, datalog, volt, temp):
 
                 # print(r.status_code)
                 # print(r.json())
-                data["lastwebsenddate"] = datefunction.nowToDatetimeHrString()
+                data[device]["lastwebsenddate"] = datefunction.nowToDatetimeHrString()
+                data[device]["lastvolt"] = volt
+
                 with open('config.json', 'w') as outfile:
                     json.dump(data, outfile)
         except Exception as e:

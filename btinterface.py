@@ -30,11 +30,11 @@ def connect(addr):
     print("connecting to %s \"%s\" on %s" % (name, host, port))
 
     try:
-        sock = BluetoothSocket(RFCOMM)
-        res = sock.connect((host, port))
-
         with open('config.json') as json_data_file:
             jsondata = json.load(json_data_file)
+
+        sock = BluetoothSocket(RFCOMM)
+        res = sock.connect((host, port))
 
         soglia = jsondata["voltthreshold"]
 
@@ -62,20 +62,16 @@ def connect(addr):
 
             data['time'] = datefunction.now()
 
-            volts = str(data['Volts'])
-            amps = str(data['Amps'])
-            watts = str(data['Watts'])
-            temps = str(data['temp_C'])
+            volts = data['Volts']
+            amps = data['Amps']
+            watts = data['Watts']
+            temps = data['temp_C']
             timestr = datefunction.toDatetimeHrString(data['time'])
 
             if (soglia > 0 and data['Volts'] < soglia):
-                alert.send(volts)
+                alert.send(addr, volts)
 
             websendnow.send(addr, timestr, volts, temps)
-
-            with open('config.json', 'w') as outfile:
-                jsondata["lastvolt"] = volts
-                json.dump(jsondata, outfile)
 
             d = b""
             sock.send((0xF0).to_bytes(1, byteorder='big'))
@@ -94,7 +90,6 @@ def connect(addr):
             return -2
         except Exception as e:
             print(addr + " disconnect")
-            # print(e)
             return -3
         finally:
             print(addr + " disconnect")

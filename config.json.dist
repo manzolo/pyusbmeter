@@ -9,8 +9,5 @@
     "voltthreshold": 0,
     "interfaces": [],
     "devicename": "UM25C",
-    "lastalertdate": "",
-    "lastvolt": "0",
-    "lastwebsenddate": "",
     "webserver": "http://127.0.0.1:80000"
 }

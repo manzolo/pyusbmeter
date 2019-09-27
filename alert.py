@@ -8,47 +8,49 @@ from email.mime.text import MIMEText
 import datefunction
 
 
-def send(volt):
+def send(addr, volt):
     with open('config.json') as json_data_file:
         data = json.load(json_data_file)
 
-        lastvolt = data["lastvolt"]
-        lastcheck = datetime.strptime(data["lastalertdate"], '%Y-%m-%d %H:%M:%S')
-        #print(str(float(lastvolt)-float(volt)))
-        if float(lastvolt) <= 0 or (float(lastvolt) > float(volt) and (float(lastvolt) - float(volt) < 0.05)):
-            print(str("Volt " + lastvolt + " -> " + volt))
-        else:
-            # if (((datefunction.now().replace(tzinfo=None) - lastcheck).total_seconds()) < 60 * 60):
-            #   return
+    lastvolt = data[addr]["lastvolt"]
+    if len(data[addr]["lastalertdate"]) > 0:
+        lastcheck = datetime.strptime(data[addr]["lastalertdate"], '%Y-%m-%d %H:%M:%S')
+        # print(str(float(lastvolt)-float(volt)))
+    if lastvolt <= 0 or (lastvolt > volt and (lastvolt - volt < 0.05)):
+        print(str("Volt " + str(lastvolt) + " -> " + str(volt)))
+    else:
+        # if (((datefunction.now().replace(tzinfo=None) - lastcheck).total_seconds()) < 60 * 60):
+        #   return
 
-            smtphost = data["mailserver"]["host"]
-            smtpport = data["mailserver"]["port"]
-            smtpuser = data["mailserver"]["user"]
-            smtppwd = data["mailserver"]["passwd"]
+        smtphost = data["mailserver"]["host"]
+        smtpport = data["mailserver"]["port"]
+        smtpuser = data["mailserver"]["user"]
+        smtppwd = data["mailserver"]["passwd"]
 
-            send_to_email = data["mailserver"]["sendto"]
+        send_to_email = data["mailserver"]["sendto"]
 
-            message = 'Detected ' + volt + ' volt, previous value ' + lastvolt + ' volt'
+        message = addr + ' detected ' + str(volt) + ' volt, previous value ' + str(lastvolt) + ' volt'
 
-            subject = 'WARNING, LOW BATTERY LEVEL ' + volt + ' Volt' + '!!!'
+        subject = 'WARNING, LOW BATTERY LEVEL ' + str(volt) + ' Volt on ' + addr + '!!!'
 
-            msg = MIMEMultipart()
-            msg['From'] = smtpuser
-            msg['To'] = send_to_email
-            msg['Subject'] = subject
+        msg = MIMEMultipart()
+        msg['From'] = smtpuser
+        msg['To'] = send_to_email
+        msg['Subject'] = subject
 
-            msg.attach(MIMEText(message, 'plain'))
+        msg.attach(MIMEText(message, 'plain'))
 
-            try:
-                server = smtplib.SMTP(smtphost, smtpport)
-                server.login(smtpuser, smtppwd)
-                text = msg.as_string()
-                server.sendmail(smtpuser, send_to_email, text)
-                server.quit()
-                print("Successfully sent email")
-                data["lastalertdate"] = datefunction.nowToDatetimeHrString()
-                data["lastvolt"] = volt
-                with open('config.json', 'w') as outfile:
-                    json.dump(data, outfile)
-            except:
-                print("Error: unable to send email")
+        try:
+            server = smtplib.SMTP(smtphost, smtpport)
+            server.login(smtpuser, smtppwd)
+            text = msg.as_string()
+            server.sendmail(smtpuser, send_to_email, text)
+            server.quit()
+            print("Successfully sent email")
+            data[addr]["lastalertdate"] = datefunction.nowToDatetimeHrString()
+            data[addr]["lastvolt"] = volt
+
+            with open('config.json', 'w') as outfile:
+                json.dump(data, outfile)
+        except:
+            print("Error: unable to send email")
