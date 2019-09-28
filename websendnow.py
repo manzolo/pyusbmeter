@@ -12,7 +12,7 @@ def send(device, datalog, volt, temp):
                 data = json.load(json_data_file)
 
                 payload = {'data': json.dumps({"device": device, 'data': datalog, 'volt': volt, 'temp': temp})}
-                r = requests.post(data["webserver"] + '/api/sendvolt', data=payload)
+                r = requests.post(data["webserver"] + '/api/sendvolt', data=payload, timeout=10)
 
                 # print(r.status_code)
                 # print(r.json())
